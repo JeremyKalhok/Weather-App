@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="/images/mist.png"> <!-- adds icon in browser tab -->
+</head>
+<body>
+
+<div class="card">
+    <div class="search">
+        <input type="text", placeholder="Enter city name", spellcheck="false"> <!-- search bar -->
+        <button><img src="images/search.png" alt=""></button>
+    </div>
+    <div class="error">
+        <p style="font-family: 'Times New Roman', Times, serif;">Invalid city name</p> <!-- put the font-family css inline to override the *{} from the css sheet -->
+    </div>
+    <div class="weather">
+        <img src="images/rain.png" class="weather-icon">
+        <h1 class="temp">22°C</h1>
+        <h2 class="city">New York</h2>
+        <div class="details">
+            <div class="col">
+                <img src="images/humidity.png">
+                <div>
+                    <p class="humidity">50%</p>
+                    <p>Humidity</p>
+                </div>
+            </div>
+            <div class="col">
+                <img src="images/wind.png">
+                <div>
+                    <p class="wind">15 km/h</p>
+                    <p>Wind Speed</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const apiKey = "{enter API key}";
+const apiUrl = "https://api.openweathermap.org/data/2.5/weather?units=metric&q="; // q= is kept so that we only need to add the city name, not q=cityname
+
+const searchBox = document.querySelector(".search input")
+const searchBtn = document.querySelector(".search button")
+const weatherIcon = document.querySelector(".weather-icon");
+
+async function checkWeather(city){
+    const response = await fetch(apiUrl + city + `&appid=${apiKey}`);
+    if(response.status == 404){
+        document.querySelector(".error").style.display = "block";   // If you enter an incorrect city name, it will trigger error 404
+                                                                    // Display error message
+        document.querySelector(".weather").style.display = "none";  // Hide weather information
+    }
+    else{
+        document.querySelector(".weather").style.display = "block"; // Otherwise, display weather information
+    }
+
+    var data = await response.json()
+
+    console.log(data);
+
+    // update the city, temp, humidity, wind placeholder values using data from the API
+    document.querySelector(".city").innerHTML = data.name;
+    document.querySelector(".temp").innerHTML = Math.round(data.main.temp) + "°C";
+    document.querySelector(".humidity").innerHTML = data.main.humidity + "%";
+    document.querySelector(".wind").innerHTML = data.wind.speed + " km/h";
+
+    if(data.weather[0].main == "Clear"){
+        weatherIcon.src = "images/clear.png";
+    }
+    else if(data.weather[0].main == "Clouds"){
+        weatherIcon.src = "images/clouds.png";
+    }
+    else if(data.weather[0].main == "Drizzle"){
+        weatherIcon.src = "images/drizzle.png";
+    }
+    else if(data.weather[0].main == "Mist"){
+        weatherIcon.src = "images/mist.png";
+    }
+    else if(data.weather[0].main == "Rain"){
+        weatherIcon.src = "images/rain.png";
+    }
+    else if(data.weather[0].main == "Snow"){
+        weatherIcon.src = "images/snow.png";
+    }
+
+    document.querySelector(".weather").style.display = "block"; // Website only displays search bar until you enter the firs city name
+                                                                // This (with .weather in style.css) prevents display of default values
+    document.querySelector(".error").style.display = "none"     // Hides error message when you enter a correct city name
+}
+
+searchBtn.addEventListener("click", ()=>{ // upon clicking the search button, send the value
+    checkWeather(searchBox.value);        // of the search box (city name) to the checkWeather 
+})                                        // function
+
+searchBox.addEventListener("keypress", function(e){
+    if (e.key === "Enter"){
+        checkWeather(searchBox.value);
+    }
+})
+</script>
+
+</body>
+</html>
