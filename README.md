@@ -2,7 +2,7 @@
 This website takes a city name as input and returns weather information from the OpenWeatherMap API. The API requires a valid API key in order to process requests, and it can be obtained from their website for free.
 
 ### Search Bar
-![Search Bar](./README_images/image1.png)
+![Search Bar](./README_images/image1.png)<br />
 Takes a city name as input and displays an error message if an invalid entry is entered
 
 ### Invalid Entry
